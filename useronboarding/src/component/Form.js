@@ -56,7 +56,12 @@ const UserForm = ({ values, errors, touched, status }) => {
                 <br />
                 <label htmlFor="user-terms">
                     Terms of Service
-                    <Field type="checkbox" name="terms" check={values.terms} />
+                    <Field
+                        id="terms"
+                        type="checkbox"
+                        name="terms"
+                        checked={values.terms}
+                    />
                     <span className="checkmark" />
                 </label>
                 {touched.terms && errors.terms && (
@@ -118,15 +123,18 @@ const FormikUserForm = withFormik({
                 "UX Designer"
             ])
             .required("Please choose one!"),
-        terms: Yup.bool().oneOf([true], "Terms of Service are required")
+        terms: Yup.bool()
+            .required()
+            .oneOf([true], "Terms of Service are required")
     }),
-    handleSubmit(values, { setStatus }) {
+    handleSubmit(values, { resetForm, setStatus }) {
         console.log("submitting", values);
         axios
             .post("https://reqres.in/api/users/", values)
             .then(res => {
                 console.log("success", res);
                 setStatus(res.data);
+                resetForm();
             })
             .catch(err => console.log(err.response));
     }
